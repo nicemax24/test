@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>进口牛肉价格查询</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.2/dist/echarts.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        dark: {
+                            100: '#3a3a3a',
+                            200: '#2d2d2d',
+                            300: '#252525',
+                            400: '#1e1e1e',
+                            500: '#181818',
+                            600: '#121212',
+                            700: '#0e0e0e',
+                            800: '#0a0a0a',
+                            900: '#050505'
+                        },
+                        primary: {
+                            100: '#d0e0ff',
+                            200: '#a1c2ff',
+                            300: '#72a3ff',
+                            400: '#4385ff',
+                            500: '#1467ff',
+                            600: '#0052cc',
+                            700: '#003e99',
+                            800: '#002a66',
+                            900: '#001533'
+                        },
+                        accent: {
+                            100: '#ffe0d0',
+                            200: '#ffc2a1',
+                            300: '#ffa372',
+                            400: '#ff8543',
+                            500: '#ff6614',
+                            600: '#cc5210',
+                            700: '#993d0c',
+                            800: '#662908',
+                            900: '#331404'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['SF Pro Display', 'Microsoft YaHei', 'sans-serif']
+                    },
+                    backdropBlur: {
+                        xs: '2px',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        html, body {
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Inter', 'Microsoft YaHei', sans-serif;
+        }
+        
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .glass-effect {
+            background: rgba(30, 30, 30, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        
+        .glass-card {
+            background: rgba(40, 40, 40, 0.4);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+    </style>
+</head>
+<body class="bg-dark-600 text-gray-200" style="background-image: url('https://images.unsplash.com/photo-1615937722923-67f6deaf2cc9?auto=format&fit=crop&q=80&w=1200&h=2400&blur=100'); background-size: cover; background-position: center;">
+    <!-- 背景渐变遮罩 -->
+    <div class="fixed inset-0 bg-gradient-to-b from-dark-900/70 to-dark-600/90 pointer-events-none"></div>
+    
+    <!-- 顶部装饰光效 -->
+    <div class="fixed top-0 left-1/4 w-1/2 h-32 bg-primary-500/20 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="fixed top-20 right-0 w-32 h-32 bg-accent-500/10 rounded-full blur-3xl pointer-events-none"></div>
+    
+    <!-- 顶部导航 -->
+    <header class="glass-effect fixed top-0 left-0 right-0 z-50 border-b border-white/10">
+        <div class="flex justify-between items-center px-4 py-3">
+            <h1 class="text-lg font-bold flex items-center">
+                <i class="bi bi-search text-primary-400 mr-2"></i>
+                <span class="bg-gradient-to-r from-primary-300 to-accent-300 bg-clip-text text-transparent">进口牛肉价格查询</span>
+            </h1>
+            <div class="flex items-center space-x-4">
+                <button class="text-gray-400 hover:text-white transition-colors">
+                    <i class="bi bi-bell text-xl"></i>
+                </button>
+                <button class="text-gray-400 hover:text-white transition-colors">
+                    <i class="bi bi-person-circle text-xl"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主内容区 -->
+    <main class="pt-16 pb-20 px-4 h-full overflow-y-auto scrollbar-hide">
+        <!-- 高级查询面板 -->
+        <section class="glass-card rounded-2xl mb-5 overflow-hidden border border-white/10 shadow-lg shadow-dark-900/50">
+            <div class="bg-gradient-to-r from-primary-600 to-primary-400 px-4 py-3">
+                <h2 class="text-white font-semibold flex items-center">
+                    <i class="bi bi-funnel mr-2"></i>
+                    多维度查询
+                </h2>
+            </div>
+            <div class="p-4">
+                <div class="grid grid-cols-2 gap-3 mb-3">
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                            <i class="bi bi-globe text-gray-500"></i>
+                        </div>
+                        <select class="block w-full pl-10 pr-3 py-2.5 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 text-sm text-gray-300 placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-primary-400 transition-all appearance-none">
+                            <option value="">选择国家</option>
+                            <option value="australia">澳大利亚</option>
+                            <option value="usa">美国</option>
+                            <option value="newzealand">新西兰</option>
+                            <option value="brazil">巴西</option>
+                            <option value="argentina">阿根廷</option>
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-400">
+                            <i class="bi bi-chevron-down text-xs"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                            <i class="bi bi-building text-gray-500"></i>
+                        </div>
+                        <select class="block w-full pl-10 pr-3 py-2.5 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 text-sm text-gray-300 placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-primary-400 transition-all appearance-none">
+                            <option value="">选择厂号</option>
+                            <option value="1001">1001</option>
+                            <option value="1002">1002</option>
+                            <option value="1003">1003</option>
+                            <option value="1004">1004</option>
+                            <option value="1005">1005</option>
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-400">
+                            <i class="bi bi-chevron-down text-xs"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                            <i class="bi bi-diagram-3 text-gray-500"></i>
+                        </div>
+                        <select class="block w-full pl-10 pr-3 py-2.5 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 text-sm text-gray-300 placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-primary-400 transition-all appearance-none">
+                            <option value="">选择部位</option>
+                            <option value="eye">眼肉</option>
+                            <option value="sirloin">西冷</option>
+                            <option value="tenderloin">菲力</option>
+                            <option value="fatty">肥牛</option>
+                            <option value="brisket">牛腩</option>
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-400">
+                            <i class="bi bi-chevron-down text-xs"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                            <i class="bi bi-calendar3 text-gray-500"></i>
+                        </div>
+                        <select class="block w-full pl-10 pr-3 py-2.5 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 text-sm text-gray-300 placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-primary-400 transition-all appearance-none">
+                            <option value="">时间范围</option>
+                            <option value="7days">近7天</option>
+                            <option value="30days">近30天</option>
+                            <option value="90days">近90天</option>
+                            <option value="1year">近1年</option>
+                            <option value="custom">自定义</option>
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-400">
+                            <i class="bi bi-chevron-down text-xs"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 高级筛选选项 -->
+                <div class="mb-4">
+                    <button id="advancedFilterBtn" class="flex items-center text-sm text-primary-300 hover:text-primary-200 transition-colors">
+                        <i class="bi bi-sliders mr-1"></i>
+                        高级筛选
+                        <i class="bi bi-chevron-down ml-1 text-xs"></i>
+                    </button>
+                    
+                    <div id="advancedFilterPanel" class="hidden mt-3 p-3 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10">
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                    <i class="bi bi-currency-dollar text-gray-500"></i>
+                                </div>
+                                <input type="text" class="block w-full pl-10 pr-3 py-2.5 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 text-sm text-gray-300 placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-primary-400 transition-all" placeholder="最低价格">
+                            </div>
+                            
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                    <i class="bi bi-currency-dollar text-gray-500"></i>
+                                </div>
+                                <input type="text" class="block w-full pl-10 pr-3 py-2.5 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 text-sm text-gray-300 placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-primary-400 transition-all" placeholder="最高价格">
+                            </div>
+                            
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                    <i class="bi bi-sort-alpha-down text-gray-500"></i>
+                                </div>
+                                <select class="block w-full pl-10 pr-3 py-2.5 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 text-sm text-gray-300 placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-primary-400 transition-all appearance-none">
+                                    <option value="">排序方式</option>
+                                    <option value="price_asc">价格从低到高</option>
+                                    <option value="price_desc">价格从高到低</option>
+                                    <option value="date_desc">日期最新</option>
+                                    <option value="date_asc">日期最早</option>
+                                </select>
+                                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-400">
+                                    <i class="bi bi-chevron-down text-xs"></i>
+                                </div>
+                            </div>
+                            
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                    <i class="bi bi-tag text-gray-500"></i>
+                                </div>
+                                <select class="block w-full pl-10 pr-3 py-2.5 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 text-sm text-gray-300 placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-primary-400 transition-all appearance-none">
+                                    <option value="">价格类型</option>
+                                    <option value="market">上游市场报价</option>
+                                    <option value="purchase">实际采购价</option>
+                                    <option value="cost">成本核算价</option>
+                                    <option value="external">对外显示报价</option>
+                                </select>
+                                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-400">
+                                    <i class="bi bi-chevron-down text-xs"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 查询按钮 -->
+                <button class="w-full py-2.5 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white font-medium rounded-xl transition-all duration-300 flex items-center justify-center">
+                    <i class="bi bi-search mr-2"></i>
+                    查询价格数据
+                </button>
+            </div>
+        </section>
+
+        <!-- 查询结果 -->
+        <section class="glass-card rounded-2xl mb-5 overflow-hidden border border-white/10 shadow-lg shadow-dark-900/50">
+            <div class="bg-gradient-to-r from-primary-600 to-primary-400 px-4 py-3 flex justify-between items-center">
+                <h2 class="text-white font-semibold flex items-center">
+                    <i class="bi bi-table mr-2"></i>
+                    查询结果
+                </h2>
+                <div class="flex items-center space-x-2">
+                    <button class="text-white/80 hover:text-white transition-colors p-1">
+                        <i class="bi bi-download"></i>
+                    </button>
+                    <button class="text-white/80 hover:text-white transition-colors p-1">
+                        <i class="bi bi-three-dots-vertical"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="p-4">
+                <!-- 结果统计 -->
+                <div class="flex justify-between items-center mb-4 px-2">
+                    <div class="text-sm text-gray-400">
+                        共找到 <span class="text-primary-300 font-medium">24</span> 条结果
+                    </div>
+                    <div class="flex items-center">
+                        <button class="text-gray-400 hover:text-white transition-colors p-1 mr-2">
+                            <i class="bi bi-list-ul"></i>
+                        </button>
+                        <button class="text-primary-300 p-1">
+                            <i class="bi bi-grid"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 结果列表 - 卡片视图 -->
+                <div class="grid grid-cols-1 gap-3 mb-4">
+                    <!-- 结果项 1 -->
+                    <div class="bg-white/5 backdrop-blur-sm rounded-xl p-3 border border-white/10 hover:border-primary-400/30 transition-all">
+                        <div class="flex justify-between items-start mb-2">
+                            <div>
+                                <div class="font-medium">澳大利亚 眼肉</div>
+                                <div class="text-xs text-gray-400">厂号: 1001</div>
+                            </div>
+                            <div class="bg-primary-500/10 text-primary-300 text-xs px-2 py-1 rounded-full">
+                                上游市场报价
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <div class="text-lg font-bold text-primary-300">¥98.50/kg</div>
+                                <div class="text-xs text-gray-400">更新时间: 2023-05-10</div>
+                            </div>
+                            <div class="flex items-center text-accent-300 text-sm">
+                                <i class="bi bi-arrow-up-right text-xs mr-1"></i>
+                                +3.2%
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 结果项 2 -->
+                    <div class="bg-white/5 backdrop-blur-sm rounded-xl p-3 border border-white/10 hover:border-primary-400/30 transition-all">
+                        <div class="flex justify-between items-start mb-2">
+                            <div>
+                                <div class="font-medium">美国 西冷</div>
+                                <div class="text-xs text-gray-400">厂号: 1002</div>
+                            </div>
+                            <div class="bg-primary-500/10 text-primary-300 text-xs px-2 py-1 rounded-full">
+                                上游市场报价
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <div class="text-lg font-bold text-primary-300">¥92.50/kg</div>
+                                <div class="text-xs text-gray-400">更新时间: 2023-05-10</div>
+                            </div>
+                            <div class="flex items-center text-accent-300 text-sm">
+                                <i class="bi bi-arrow-up-right text-xs mr-1"></i>
+                                +1.5%
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 结果项 3 -->
+                    <div class="bg-white/5 backdrop-blur-sm rounded-xl p-3 border border-white/10 hover:border-primary-400/30 transition-all">
+                        <div class="flex justify-between items-start mb-2">
+                            <div>
+                                <div class="font-medium">新西兰 菲力</div>
+                                <div class="text-xs text-gray-400">厂号: 1003</div>
+                            </div>
+                            <div class="bg-primary-500/10 text-primary-300 text-xs px-2 py-1 rounded-full">
+                                上游市场报价
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <div class="text-lg font-bold text-primary-300">¥108.50/kg</div>
+                                <div class="text-xs text-gray-400">更新时间: 2023-05-10</div>
+                            </div>
+                            <div class="flex items-center text-accent-300 text-sm">
+                                <i class="bi bi-arrow-up-right text-xs mr-1"></i>
+                                +2.8%
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 结果项 4 -->
+                    <div class="bg-white/5 backdrop-blur-sm rounded-xl p-3 border border-white/10 hover:border-primary-400/30 transition-all">
+                        <div class="flex justify-between items-start mb-2">
+                            <div>
+                                <div class="font-medium">巴西 肥牛</div>
+                                <div class="text-xs text-gray-400">厂号: 1004</div>
+                            </div>
+                            <div class="bg-primary-500/10 text-primary-300 text-xs px-2 py-1 rounded-full">
+                                上游市场报价
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <div class="text-lg font-bold text-primary-300">¥65.20/kg</div>
+                                <div class="text-xs text-gray-400">更新时间: 2023-05-10</div>
+                            </div>
+                            <div class="flex items-center text-green-500 text-sm">
+                                <i class="bi bi-arrow-down-right text-xs mr-1"></i>
+                                -0.5%
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 分页控件 -->
+                <div class="flex justify-center">
+                    <div class="inline-flex bg-white/5 backdrop-blur-sm rounded-full p-1 border border-white/10">
+                        <button class="w-8 h-8 flex items-center justify-center rounded-full text-gray-400 hover:text-white transition-colors">
+                            <i class="bi bi-chevron-left"></i>
+                        </button>
+                        <button class="w-8 h-8 flex items-center justify-center rounded-full bg-primary-500 text-white">1</button>
+                        <button class="w-8 h-8 flex items-center justify-center rounded-full text-gray-400 hover:text-white transition-colors">2</button>
+                        <button class="w-8 h-8 flex items-center justify-center rounded-full text-gray-400 hover:text-white transition-colors">3</button>
+                        <button class="w-8 h-8 flex items-center justify-center rounded-full text-gray-400 hover:text-white transition-colors">
+                            <i class="bi bi-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- 价格对比分析 -->
+        <section class="glass-card rounded-2xl mb-5 overflow-hidden border border-white/10 shadow-lg shadow-dark-900/50">
+            <div class="bg-gradient-to-r from-primary-600 to-primary-400 px-4 py-3">
+                <h2 class="text-white font-semibold flex items-center">
+                    <i class="bi bi-bar-chart-line mr-2"></i>
+                    价格对比分析
+                </h2>
+            </div>
+            <div class="p-4">
+                <!-- 价格趋势动态图 -->
+                <div class="mb-5">
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="text-sm font-medium text-white/90">价格趋势动态</h3>
+                        <div class="flex items-center space-x-2">
+                            <button class="trend-btn px-2 py-0.5 rounded-full text-xs bg-primary-500/20 text-primary-300 border border-primary-500/30">月度</button>
+                            <button class="trend-btn px-2 py-0.5 rounded-full text-xs bg-transparent text-gray-400 hover:text-white transition-colors">季度</button>
+                            <button class="trend-btn px-2 py-0.5 rounded-full text-xs bg-transparent text-gray-400 hover:text-white transition-colors">年度</button>
+                        </div>
+                    </div>
+                    <div id="trendChart" class="w-full h-48 rounded-xl overflow-hidden"></div>
+                </div>
+                
+                <!-- 对比类型选择 -->
+                <div class="flex justify-center mb-4">
+                    <div class="inline-flex bg-white/5 backdrop-blur-sm rounded-full p-1 border border-white/10">
+                        <button class="compare-btn px-4 py-1 rounded-full text-sm bg-primary-500 text-white" data-type="country">不同国家对比</button>
+                        <button class="compare-btn px-4 py-1 rounded-full text-sm text-gray-400 hover:text-white transition-colors" data-type="part">不同部位对比</button>
+                        <button class="compare-btn px-4 py-1 rounded-full text-sm text-gray-400 hover:text-white transition-colors" data-type="time">历史同期对比</button>
+                    </div>
+                </div>
+                
+                <!-- 对比图表容器 -->
+                <div id="compareChart" class="w-full h-72 rounded-xl overflow-hidden"></div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 底部导航 -->
+    <nav class="glass-effect fixed bottom-0 left-0 right-0 border-t border-white/10 z-50">
+        <div class="flex justify-around items-center py-2">
+            <a href="#" class="flex flex-col items-center px-3 py-1 text-gray-400 hover:text-primary-300 transition-colors">
+                <i class="bi bi-house-door text-xl mb-1"></i>
+                <span class="text-xs">首页</span>
+            </a>
+            <a href="#" class="flex flex-col items-center px-3 py-1 text-primary-300">
+                <i class="bi bi-search text-xl mb-1"></i>
+                <span class="text-xs">查询</span>
+            </a>
+            <a href="#" class="flex flex-col items-center px-3 py-1 text-gray-400 hover:text-primary-300 transition-colors">
+                <i class="bi bi-bar-chart text-xl mb-1"></i>
+                <span class="text-xs">分析</span>
+            </a>
+            <a href="#" class="flex flex-col items-center px-3 py-1 text-gray-400 hover:text-primary-300 transition-colors">
+                <i class="bi bi-newspaper text-xl mb-1"></i>
+                <span class="text-xs">资讯</span>
+            </a>
+            <a href="#" class="flex flex-col items-center px-3 py-1 text-gray-400 hover:text-primary-300 transition-colors">
+                <i class="bi bi-person text-xl mb-1"></i>
+                <span class="text-xs">我的</span>
+            </a>
+        </div>
+    </nav>
+<script>
+        // 初始化高级筛选面板的显示/隐藏
+        document.addEventListener('DOMContentLoaded', function() {
+            const advancedFilterBtn = document.getElementById('advancedFilterBtn');
+            const advancedFilterPanel = document.getElementById('advancedFilterPanel');
+            
+            advancedFilterBtn.addEventListener('click', function() {
+                advancedFilterPanel.classList.toggle('hidden');
+                const icon = advancedFilterBtn.querySelector('.bi-chevron-down');
+                if (advancedFilterPanel.classList.contains('hidden')) {
+                    icon.classList.remove('bi-chevron-up');
+                    icon.classList.add('bi-chevron-down');
+                } else {
+                    icon.classList.remove('bi-chevron-down');
+                    icon.classList.add('bi-chevron-up');
+                }
+            });
+            
+            // 初始化价格趋势图表
+            var trendChartDom = document.getElementById('trendChart');
+            var trendChart = echarts.init(trendChartDom);
+            
+            // 生成模拟的价格趋势数据
+            function generateTrendData() {
+                const basePrice = 95;
+                const dates = [];
+                const prices = [];
+                const volumes = [];
+                
+                // 生成最近30天的数据
+                for (let i = 0; i < 30; i++) {
+                    const date = new Date();
+                    date.setDate(date.getDate() - (30 - i));
+                    dates.push([date.getMonth() + 1, date.getDate()].join('/'));
+                    
+                    // 生成波动的价格数据
+                    const randomFactor = Math.random() * 10 - 5; // -5 到 5 之间的随机数
+                    const trendFactor = i * 0.15; // 轻微上升趋势
+                    const price = basePrice + randomFactor + trendFactor;
+                    prices.push(price.toFixed(2));
+                    
+                    // 生成交易量数据
+                    const volume = Math.floor(Math.random() * 100) + 50;
+                    volumes.push(volume);
+                }
+                
+                return {
+                    dates: dates,
+                    prices: prices,
+                    volumes: volumes
+                };
+            }
+            
+            const trendData = generateTrendData();
+            
+            // 设置价格趋势图表选项
+            const trendOption = {
+                backgroundColor: 'transparent',
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'cross',
+                        crossStyle: {
+                            color: 'rgba(255, 255, 255, 0.3)'
+                        }
+                    },
+                    backgroundColor: 'rgba(30, 30, 30, 0.8)',
+                    borderColor: 'rgba(255, 255, 255, 0.1)',
+                    textStyle: {
+                        color: '#fff'
+                    }
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '15%',
+                    top: '15%',
+                    containLabel: true
+                },
+                xAxis: {
+                    type: 'category',
+                    data: trendData.dates,
+                    axisLine: {
+                        lineStyle: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        }
+                    },
+                    axisLabel: {
+                        color: 'rgba(255, 255, 255, 0.6)',
+                        fontSize: 9,
+                        interval: 4
+                    },
+                    axisTick: {
+                        show: false
+                    }
+                },
+                yAxis: [
+                    {
+                        type: 'value',
+                        name: '价格',
+                        nameTextStyle: {
+                            color: 'rgba(255, 255, 255, 0.5)',
+                            fontSize: 10
+                        },
+                        min: 85,
+                        max: 110,
+                        axisLine: {
+                            show: false
+                        },
+                        axisLabel: {
+                            color: 'rgba(255, 255, 255, 0.6)',
+                            fontSize: 9,
+                            formatter: '{value} 元'
+                        },
+                        splitLine: {
+                            lineStyle: {
+                                color: 'rgba(255, 255, 255, 0.05)'
+                            }
+                        }
+                    },
+                    {
+                        type: 'value',
+                        name: '交易量',
+                        nameTextStyle: {
+                            color: 'rgba(255, 255, 255, 0.5)',
+                            fontSize: 10
+                        },
+                        axisLine: {
+                            show: false
+                        },
+                        axisLabel: {
+                            color: 'rgba(255, 255, 255, 0.6)',
+                            fontSize: 9,
+                            formatter: '{value} kg'
+                        },
+                        splitLine: {
+                            show: false
+                        }
+                    }
+                ],
+                series: [
+                    {
+                        name: '价格',
+                        type: 'line',
+                        smooth: true,
+                        symbol: 'circle',
+                        symbolSize: 5,
+                        sampling: 'average',
+                        itemStyle: {
+                            color: '#3B82F6'
+                        },
+                        areaStyle: {
+                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                {
+                                    offset: 0,
+                                    color: 'rgba(59, 130, 246, 0.5)'
+                                },
+                                {
+                                    offset: 1,
+                                    color: 'rgba(59, 130, 246, 0.05)'
+                                }
+                            ])
+                        },
+                        data: trendData.prices,
+                        // 添加动画效果
+                        animationDuration: 2800,
+                        animationEasing: 'cubicInOut'
+                    },
+                    {
+                        name: '交易量',
+                        type: 'bar',
+                        yAxisIndex: 1,
+                        itemStyle: {
+                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                {
+                                    offset: 0,
+                                    color: 'rgba(255, 102, 20, 0.8)'
+                                },
+                                {
+                                    offset: 1,
+                                    color: 'rgba(255, 102, 20, 0.3)'
+                                }
+                            ])
+                        },
+                        data: trendData.volumes,
+                        // 添加动画效果
+                        animationDuration: 2800,
+                        animationEasing: 'elasticOut'
+                    }
+                ],
+                // 添加动态效果
+                animationEasing: 'elasticOut',
+                animationDelayUpdate: function (idx) {
+                    return idx * 5;
+                }
+            };
+            
+            trendChart.setOption(trendOption);
+            
+            // 添加趋势图时间范围按钮的点击事件
+            const trendButtons = document.querySelectorAll('.trend-btn');
+            
+            trendButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // 移除所有按钮的活跃状态
+                    trendButtons.forEach(btn => {
+                        btn.classList.remove('bg-primary-500');
+                        btn.classList.add('text-gray-400');
+                        btn.classList.remove('text-white');
+                    });
+                    
+                    // 设置当前按钮为活跃状态
+                    this.classList.add('bg-primary-500');
+                    this.classList.remove('text-gray-400');
+                    this.classList.add('text-white');
+                    
+                    // 这里可以根据不同的时间范围切换数据
+                    // 简化示例，仅重新生成数据
+                    const newTrendData = generateTrendData();
+                    
+                    // 更新图表
+                    trendChart.setOption({
+                        xAxis: {
+                            data: newTrendData.dates
+                        },
+                        series: [
+                            {
+                                name: '价格',
+                                data: newTrendData.prices
+                            },
+                            {
+                                name: '交易量',
+                                data: newTrendData.volumes
+                            }
+                        ]
+                    });
+                });
+            });
+            
+            // 初始化价格对比图表
+            var compareChartDom = document.getElementById('compareChart');
+            var compareChart = echarts.init(compareChartDom);
+            
+            // 不同国家同部位对比数据
+            const countryCompareData = {
+                categories: ['澳大利亚', '美国', '新西兰', '巴西', '阿根廷'],
+                series: [
+                    {
+                        name: '眼肉',
+                        data: [98.5, 105.2, 94.8, 88.6, 90.2],
+                        type: 'bar',
+                        itemStyle: {
+                            color: '#3B82F6'
+                        }
+                    }
+                ]
+            };
+            
+            // 同国家不同部位对比数据
+            const partCompareData = {
+                categories: ['眼肉', '西冷', '菲力', '肥牛', '牛腩'],
+                series: [
+                    {
+                        name: '澳大利亚',
+                        data: [98.5, 86.75, 112.3, 65.2, 58.9],
+                        type: 'bar',
+                        itemStyle: {
+                            color: '#3B82F6'
+                        }
+                    }
+                ]
+            };
+            
+            // 历史同期对比数据
+            const timeCompareData = {
+                categories: ['2022年同期', '2023年当前'],
+                series: [
+                    {
+                        name: '眼肉',
+                        data: [92.3, 98.5],
+                        type: 'bar',
+                        itemStyle: {
+                            color: '#3B82F6'
+                        }
+                    },
+                    {
+                        name: '西冷',
+                        data: [81.5, 86.75],
+                        type: 'bar',
+                        itemStyle: {
+                            color: '#10B981'
+                        }
+                    },
+                    {
+                        name: '菲力',
+                        data: [105.8, 112.3],
+                        type: 'bar',
+                        itemStyle: {
+                            color: '#F59E0B'
+                        }
+                    }
+                ]
+            };
+            
+            // 默认显示不同国家对比
+            let currentCompareData = countryCompareData;
+            
+            // 设置对比图表选项
+            const compareOption = {
+                backgroundColor: 'transparent',
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'shadow'
+                    },
+                    backgroundColor: 'rgba(30, 30, 30, 0.8)',
+                    borderColor: 'rgba(255, 255, 255, 0.1)',
+                    textStyle: {
+                        color: '#fff'
+                    }
+                },
+                legend: {
+                    data: currentCompareData.series.map(item => item.name),
+                    textStyle: {
+                        color: 'rgba(255, 255, 255, 0.6)'
+                    },
+                    top: 0,
+                    icon: 'roundRect'
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '15%',
+                    top: '15%',
+                    containLabel: true
+                },
+                xAxis: {
+                    type: 'category',
+                    data: currentCompareData.categories,
+                    axisLine: {
+                        lineStyle: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        }
+                    },
+                    axisLabel: {
+                        color: 'rgba(255, 255, 255, 0.6)',
+                        fontSize: 10
+                    },
+                    axisTick: {
+                        show: false
+                    }
+                },
+                yAxis: {
+                    type: 'value',
+                    name: '价格 (元/kg)',
+                    nameTextStyle: {
+                        color: 'rgba(255, 255, 255, 0.5)',
+                        fontSize: 10
+                    },
+                    axisLine: {
+                        show: false
+                    },
+                    axisLabel: {
+                        color: 'rgba(255, 255, 255, 0.6)',
+                        fontSize: 10
+                    },
+                    splitLine: {
+                        lineStyle: {
+                            color: 'rgba(255, 255, 255, 0.05)'
+                        }
+                    }
+                },
+                series: currentCompareData.series,
+                animationDuration: 2000,
+                animationEasing: 'cubicInOut'
+            };
+            
+            compareChart.setOption(compareOption);
+            
+            // 添加对比类型按钮的点击事件
+            const compareButtons = document.querySelectorAll('.compare-btn');
+            
+            compareButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // 移除所有按钮的活跃状态
+                    compareButtons.forEach(btn => {
+                        btn.classList.remove('bg-primary-500');
+                        btn.classList.remove('text-white');
+                        btn.classList.add('text-gray-400');
+                    });
+                    
+                    // 设置当前按钮为活跃状态
+                    this.classList.add('bg-primary-500');
+                    this.classList.add('text-white');
+                    this.classList.remove('text-gray-400');
+                    
+                    // 根据按钮的数据类型切换数据
+                    const compareType = this.getAttribute('data-type');
+                    
+                    if (compareType === 'country') {
+                        currentCompareData = countryCompareData;
+                    } else if (compareType === 'part') {
+                        currentCompareData = partCompareData;
+                    } else if (compareType === 'time') {
+                        currentCompareData = timeCompareData;
+                    }
+                    
+                    // 更新图表
+                    compareChart.setOption({
+                        legend: {
+                            data: currentCompareData.series.map(item => item.name)
+                        },
+                        xAxis: {
+                            data: currentCompareData.categories
+                        },
+                        series: currentCompareData.series
+                    });
+                });
+            });
+            
+            // 窗口大小变化时重新调整图表大小
+            window.addEventListener('resize', function() {
+                trendChart.resize();
+                compareChart.resize();
+            });
+        });
+    </script>
+</body>
+</html>
